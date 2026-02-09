@@ -1,28 +1,10 @@
 ## Student Name:
 ## Student ID: 
 
-Prompt 1: "Copy paste your question"
-LLM Response 1: "Copy paste LLMs response"
-
---------------------------------------------------
-Prompt 2: "Copy paste your question"
-LLM Response 2: "Copy paste LLMs response"
---------------------------------------------------
-
-You said:
-why am i gettingthis error  File "/cs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/src/test_solution.py", line 12, in <module>
+Prompt 1: "why am i gettingthis error  File "/cs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/src/test_solution.py", line 12, in <module>
     import pytest
-ModuleNotFoundError: No module named 'pytest'
-ChatGPT said:
-
-That error is literally Python saying:
-
-    “I tried to import pytest, but I don’t have pytest installed in this Python environment.”
-
-So nothing is wrong with your code — your environment just doesn’t have pytest.
-Most common fix
-
-Run this in your terminal:
+ModuleNotFoundError: No module named 'pytest'"
+LLM Response 1: "Run this in your terminal:
 
 pip install pytest
 
@@ -32,47 +14,14 @@ python3 -m pip install pytest
 
 or (on some systems):
 
-python -m pip install pytest
+python -m pip install pytest"
 
-⚠️ Very common student mistake
+--------------------------------------------------
+Prompt 2: "Copy paste your question"
+LLM Response 2: "Copy paste LLMs response"
+--------------------------------------------------
 
-You installed pytest for one Python… but you’re running another.
 
-Check which Python is running your file:
-
-which python
-
-and which pip is installing:
-
-which pip
-
-They should point to the same place.
-If you’re using a virtual environment
-
-Make sure it’s activated:
-
-source venv/bin/activate
-
-(or whatever your venv is called)
-
-Then:
-
-pip install pytest
-
-Quick test
-
-After installing, try:
-
-python -c "import pytest; print(pytest.__version__)"
-
-If that works → your error is gone ✅
-
-If you want, paste what you get when you run:
-
-python --version
-pip --version
-
-and I can tell you exactly what’s mismatched.
 You said:
 /cs/local/bin/python
 ptl24 306 % which pip

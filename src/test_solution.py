@@ -58,17 +58,17 @@ def test_empty():
     requests = []
     assert is_allocation_feasible(resources, requests) is True
 
-def zeroCapasity():
+def test_zeroCapasity():
     resources = {'cpu': 0}
     requests = [{'cpu': 2}, {'cpu': 3}]
     assert is_allocation_feasible(resources, requests) is False
 
-def zerocpuwithmem():
+def test_zerocpuwithmem():
     resources = {'cpu': 8, 'mem': 30}
     requests = [{'cpu': 0, 'mem': 8}, {'cpu': 0, 'mem': 10}, {'cpu': 0, 'mem': 14}]
     assert is_allocation_feasible(resources, requests) is False
 
-def multiple_resources_all_feasible():
+def test_multiple_resources_all_feasible():
 
     resources = {'cpu': 10, 'mem': 21}
     requests = [{'cpu': 3, 'mem': 6}, {'cpu': 4, 'mem': 10}]
