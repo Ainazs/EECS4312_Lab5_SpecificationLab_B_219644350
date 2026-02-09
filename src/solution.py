@@ -1,6 +1,9 @@
 ## Student Name:
 ## Student ID: 
 
+## Student Name:
+## Student ID: 
+
 """
 Stub file for the is allocation feasible exercise.
 
@@ -18,26 +21,6 @@ def is_allocation_feasible(
     resources: Dict[str, Number],
     requests: List[Dict[str, Number]]
 ) -> bool:
-    
-        # Validate requests structure
-    for req in requests:
-        if not isinstance(req, dict):
-            raise ValueError("Each request must be a dictionary")
-
-    # Check for unknown resources in requests
-    for req in requests:
-        for resource in req:
-            if resource not in resources:
-                return False
-
-    # Check capacity constraints
-    for resource, capacity in resources.items():
-        total_required = sum(req.get(resource, 0) for req in requests)
-        if total_required > capacity:
-            return False
-
-    return True
-
     """
     Determine whether a set of resource requests can be satisfied given limited capacities.
 
@@ -49,5 +32,30 @@ def is_allocation_feasible(
         True if the allocation is feasible, False otherwise.
 
     """
-    # TODO: Implement this function
-    #raise NotImplementedError("suggest_slots function has not been implemented yet")
+    # Step 1: Validate that all requests are dictionaries
+    for request in requests:
+        if not isinstance(request, dict):
+            raise ValueError("Each request must be a dictionary")
+    
+    # Step 2: Calculate total demand for each resource across all requests
+    total_demand: Dict[str, Number] = {}
+    
+    for request in requests:
+        for resource_name, amount in request.items():
+            if resource_name in total_demand:
+                total_demand[resource_name] += amount
+            else:
+                total_demand[resource_name] = amount
+    
+    # Step 3: Check if every resource demand can be satisfied
+    for resource_name, demand in total_demand.items():
+        # If a resource is requested but not available, allocation is infeasible
+        if resource_name not in resources:
+            return False
+        
+        # If demand exceeds available capacity, allocation is infeasible
+        if demand > resources[resource_name]:
+            return False
+    
+    # All checks passed - allocation is feasible
+    return True

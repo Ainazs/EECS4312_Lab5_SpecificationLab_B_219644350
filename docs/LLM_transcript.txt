@@ -17,487 +17,159 @@ or (on some systems):
 python -m pip install pytest"
 
 --------------------------------------------------
-Prompt 2: "Copy paste your question"
-LLM Response 2: "Copy paste LLMs response"
---------------------------------------------------
+Prompt 2: "this is my solution but there is a bug here and it's incomplete:def is_allocation_feasible( resources: Dict[str, Number], requests: List[Dict[str, Number]] ) -> bool: # Validate requests structure for req in requests: if not isinstance(req, dict): raise ValueError("Each request must be a dictionary") # Check for unknown resources in requests for req in requests: for resource in req: if resource not in resources: return False # Check capacity constraints for resource, capacity in resources.items(): total_required = sum(req.get(resource, 0) for req in requests) if total_required > capacity: return False return True"
+LLM Response 2: "1. Your docstring is in the wrong place (bug)
 
-
-You said:
-/cs/local/bin/python
-ptl24 306 % which pip
-/cs/local/bin/pip
-ptl24 307 % i already installed it though 
-ChatGPT said:
-
-Okay good — that output actually helps a lot 👍
-Your python and pip do match:
-
-/cs/local/bin/python
-/cs/local/bin/pip
-
-So in theory… pytest should be visible.
-If you’re still getting:
-
-ModuleNotFoundError: No module named 'pytest'
-
-then one of these is happening:
-✅ First: verify pytest is REALLY installed
-
-Run:
-
-pip show pytest
-
-If it says “Package(s) not found” → then it actually isn’t installed in this environment.
-
-Reinstall explicitly with:
-
-/cs/local/bin/python -m pip install --user pytest
-
-(Using python -m pip avoids weird path issues.)
-⚠️ Very likely issue: you’re running a DIFFERENT python
-
-Your error shows:
-
-File "/cs/home/ainaz04/.../test_solution.py"
-
-How are you running the file?
-If you’re doing something like:
-
-python3 test_solution.py
-
-but python3 ≠ /cs/local/bin/python, then pytest is installed for the wrong interpreter.
-
-Check:
-
-which python3
-
-and:
-
-python3 -m pip show pytest
-
-💣 Nuclear fix (works almost always)
-
-Run exactly this:
-
-/cs/local/bin/python -m pip install pytest
-/cs/local/bin/python -c "import pytest; print(pytest.__version__)"
-
-If the second line fails → pytest is NOT installed in that python.
-Tell me one thing
-
-What command are you using to run your test file?
-Paste it exactly, like:
-
-python test_solution.py
-
-or
-
-pytest
-
-That will let me pinpoint the mismatch instantly 🎯
-You said:
-Version: 7.4.0
-Summary: pytest: simple powerful testing with Python
-Home-page: https://docs.pytest.org/en/latest/
-Author: Holger Krekel, Bruno Oliveira, Ronny Pfannschmidt, Floris Bruynooghe, Brianna Laugher, Florian Bruhin and others
-Author-email: 
-License: MIT
-Location: /eecs/local/lib/python3.11/site-packages
-Requires: iniconfig, packaging, pluggy
-Required-by: pytest-html, pytest-metadata
-ChatGPT said:
-
-Aha — found the problem 👀
-This line is the smoking gun:
-
-Location: /eecs/local/lib/python3.11/site-packages
-
-but earlier your Python is:
-
-/cs/local/bin/python
-
-So right now you have:
-
-✅ pytest installed in:
-/eecs/local/lib/python3.11/...
-
-❌ but you are running Python from:
-/cs/local/bin/python
-
-Those are different Python installations → so your Python literally cannot see pytest.
-
-That’s why you get:
-
-ModuleNotFoundError: No module named 'pytest'
-
-✅ Fix (best one)
-
-Install pytest into the SAME Python you’re using:
-
-/cs/local/bin/python -m pip install pytest
-
-Then test:
-
-/cs/local/bin/python -c "import pytest; print(pytest.__version__)"
-
-If that works → you’re golden ✨
-🔁 Alternative (use the Python that already has pytest)
-
-Instead of changing installs, run your program with:
-
-/eecs/local/bin/python test_solution.py
-
-(but usually the first fix is cleaner)
-💡 Why this happened
-
-York’s lab machines have multiple Python installs:
-
-    /cs/local/...
-
-    /eecs/local/...
-
-pip quietly installed into one, while python ran the other.
-Classic lab-environment trap 😅
-
-If you paste what you run to execute your file (the exact command), I can tell you which fix is cleaner for your setup.
-You said:
-219644350/test_solution.py': [Errno 2] No such file or directory
-ptl24 313 % cd /eecs/local/bin/python test_solution.py
-cd: Too many arguments.
-ptl24 314 % /eecs/local/bin/python test_solution.py
-/eecs/local/bin/python: can't open file '/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/test_solution.py': [Errno 2] No such file or directory
-ChatGPT said:
-
-You’re super close — the error now is just path + spaces and a small command mix-up.
-
-Two issues happened:
-❌ This is invalid:
-
-cd /eecs/local/bin/python test_solution.py
-
-cd is only for changing directories, not running Python.
-❌ This failed because your folder has a space:
-
-LAB5 4312
-
-So the shell thinks:
-
-LAB5   and   4312
-
-are two different arguments → file “not found”.
-✅ Correct way (quote the path)
-
-Run:
-
-/eecs/local/bin/python "/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/src/test_solution.py"
-
-OR first go into the directory:
-
-cd "/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/src"
-
-then run:
-
-/eecs/local/bin/python test_solution.py
-
-💡 Why this works
-
-Quotes tell the shell:
-
-    “this whole thing is ONE path, even though it has spaces”
-
-Without quotes → it breaks.
-🔥 Best long-term fix (optional but smart)
-
-Rename the folder to remove spaces:
-
-mv "LAB5 4312" LAB5_4312
-
-Then life becomes much easier.
-
-If you want, paste the output of:
-
-ls "/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/src"
-
-and I’ll give you the exact command tailored to your path.
-You said:
-add 5 test cases to this ## Student Name:
-## Student ID: 
-
-"""
-Public test suite for the meeting slot suggestion exercise.
-
-Students can run these tests locally to check basic correctness of their implementation.
-The hidden test suite used for grading contains additional edge cases and will not be
-available to students.
-"""
-from solution import is_allocation_feasible
-import pytest
-
-
-def test_basic_feasible_single_resource():
-    # Basic Feasible Single-Resource
-    # Constraint: total demand <= capacity
-    # Reason: check basic functional requirement
-    resources = {'cpu': 10}
-    requests = [{'cpu': 3}, {'cpu': 4}, {'cpu': 3}]
-    assert is_allocation_feasible(resources, requests) is True
-
-def test_multi_resource_infeasible_one_overloaded():
-    # Multi-Resource Infeasible (one overload)
-    # Constraint: one resource exceeds capacity
-    # Reason: check detection of per-resource infeasibility
-    resources = {'cpu': 8, 'mem': 30}
-    requests = [{'cpu': 2, 'mem': 8}, {'cpu': 3, 'mem': 10}, {'cpu': 3, 'mem': 14}]
-    assert is_allocation_feasible(resources, requests) is False
-
-def test_missing_resource_in_availability():
-    # Missing Resource in Requests
-    # Constraint: request references unavailable resource
-    # Reason: allocation must be infeasible
-    resources = {'cpu': 10}
-    requests = [{'cpu': 2}, {'gpu': 1}]
-    assert is_allocation_feasible(resources, requests) is False
-
-def test_non_dict_request_raises():
-    # Non-Dict Request Raises Error
-    # Constraint: structural validation
-    # Reason: request must be a dict
-    resources = {'cpu': 5}
-    requests = [{'cpu': 2}, ['mem', 1]]  # malformed request
-    with pytest.raises(ValueError):
-        is_allocation_feasible(resources, requests)
-
-"""TODO: Add at least 5 additional test cases to test your implementation."""
-ChatGPT said:
-
-Here are 5 solid additional pytest test cases you can append under the TODO.
-They cover important edge cases your grader is very likely to check.
-
-Just paste these under your last comment:
-
-def test_exact_capacity_match():
-    # Exact Capacity Match
-    # Constraint: total demand == capacity
-    # Reason: boundary condition should be feasible
-    resources = {'cpu': 5}
-    requests = [{'cpu': 2}, {'cpu': 3}]
-    assert is_allocation_feasible(resources, requests) is True
-
-
-def test_empty_requests():
-    # Empty Requests
-    # Constraint: no resource usage
-    # Reason: should always be feasible
-    resources = {'cpu': 10, 'mem': 20}
-    requests = []
-    assert is_allocation_feasible(resources, requests) is True
-
-
-def test_zero_capacity_resource():
-    # Zero Capacity Resource
-    # Constraint: resource capacity is zero
-    # Reason: any positive request should fail
-    resources = {'cpu': 0}
-    requests = [{'cpu': 1}]
-    assert is_allocation_feasible(resources, requests) is False
-
-
-def test_request_with_zero_demand():
-    # Zero Demand Request
-    # Constraint: request consumes no resources
-    # Reason: should not affect feasibility
-    resources = {'cpu': 5}
-    requests = [{'cpu': 0}, {'cpu': 5}]
-    assert is_allocation_feasible(resources, requests) is True
-
-
-def test_multiple_resources_all_feasible():
-    # Multiple Resources All Feasible
-    # Constraint: all resource demands within limits
-    # Reason: verify correct summation across resources
-    resources = {'cpu': 10, 'mem': 20}
-    requests = [{'cpu': 3, 'mem': 5}, {'cpu': 4, 'mem': 10}]
-    assert is_allocation_feasible(resources, requests) is True
-
-These test:
-✅ boundary case
-✅ empty input
-✅ zero capacity
-✅ zero demand
-✅ multi-resource success
-
-If you want, I can also add 2–3 evil edge cases (negative numbers, wrong types, etc.) to really stress-test your function 😈
-You said:
-def test_multiple_resources_all_feasible():
-    # Multiple Resources All Feasible
-    # Constraint: all resource demands within limits
-    # Reason: verify correct summation across resources
-    resources = {'cpu': 10, 'mem': 20}
-    requests = [{'cpu': 3, 'mem': 5}, {'cpu': 4, 'mem': 10}]
-    assert is_allocation_feasible(resources, requests) is True
-ChatGPT said:
-
-Yep — that test case is correct and well-written ✅
-It checks exactly what it says:
-
-• multiple resources (cpu, mem)
-• sums across requests
-• stays within capacity
-• expects True
-
-So this is a valid additional test and will pass for a correct implementation of is_allocation_feasible.
-
-If you run:
-
-pytest
-
-this test should:
-✔️ pass if your function correctly sums per resource
-❌ fail if your function only checks one resource or forgets mem
-
-If you want, paste your is_allocation_feasible function and I can sanity-check it against this test (and the others) for you.
-You said:
-ptl24 320 % git commit -m "Done"
-fatal: Unable to create '/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/.git/index.lock': File exists.
-
-Another git process seems to be running in this repository, e.g.
-an editor opened by 'git commit'. Please make sure all processes
-are terminated then try again. If it still fails, a git process
-may have crashed in this repository earlier:
-remove the file manually to continue.
-ptl24 321 % how do i fix this
-ChatGPT said:
-
-Git is basically saying:
-
-    “I think another git command is still running… or it crashed and left junk behind.”
-
-That index.lock file is a safety lock. When it gets stuck, you have to remove it manually.
-✅ Step 1: Make sure no git is running
-
-Run:
-
-ps -ef | grep git
-
-If you see a git commit or git process still running, kill it:
-
-kill <PID>
-
-(only if you see one)
-✅ Step 2: Remove the lock file (this fixes it 99% of the time)
-
-Run this exactly (notice the quotes because of the space in LAB5 4312):
-
-rm "/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/.git/index.lock"
-
-✅ Step 3: Try committing again
-
-git commit -m "Done"
-
-💡 Why this happened
-
-Usually caused by:
-• closing terminal while git was running
-• CTRL+C during a commit
-• editor crashed
-• network/home directory glitch
-
-Not your fault — super common on lab machines.
-
-If it still errors, paste the output of:
-
-ls "/eecs/home/ainaz04/LAB5 4312/EECS4312_Lab5_SpecificationLab_B_219644350/.git"
-
-and I’ll tell you exactly what’s stuck.
-You said:
-def is_allocation_feasible(
-    resources: Dict[str, Number],
-    requests: List[Dict[str, Number]]
-) -> bool:
-    
-        # Validate requests structure
-    for req in requests:
-        if not isinstance(req, dict):
-            raise ValueError("Each request must be a dictionary")
-
-    # Check for unknown resources in requests
-    for req in requests:
-        for resource in req:
-            if resource not in resources:
-                return False
-
-    # Check capacity constraints
-    for resource, capacity in resources.items():
-        total_required = sum(req.get(resource, 0) for req in requests)
-        if total_required > capacity:
-            return False
+This part:
 
     return True
 
     """
     Determine whether a set of resource requests can be satisfied given limited capacities.
 
-    Args:
-        resources : Dict[str, Number], Mapping from resource name to total available capacity.
-        requests : List[Dict[str, Number]], List of requests. Each request is a mapping from resource name to the amount required.
 
-    Returns:
-        True if the allocation is feasible, False otherwise.
+Everything after return True is dead code and never runs.
+That triple-quoted string should be at the top of the function, not after return.
 
-    """
-    # TODO: Implement this function
-    #raise NotImplementedError("suggest_slots function has not been implemented yet")describe input peramiters type and fromate what values are valid
-ChatGPT said:
+🔴 2. It’s logically incomplete (missing important constraints)
 
-Right now your function works, but your documentation is messy (docstring is in the wrong place and doesn’t clearly describe valid inputs).
-They’re asking you to describe the input parameters: type, format, and valid values.
+Right now, your function:
+✅ checks unknown resources
+✅ checks total capacity
+❌ does NOT check:
 
-Here is a clean, correct docstring you can put directly under the function header:
+negative capacities
 
-def is_allocation_feasible(
-    resources: Dict[str, Number],
-    requests: List[Dict[str, Number]]
-) -> bool:
-    """
-    Determine whether a set of resource requests can be satisfied given limited capacities.
+negative request amounts
 
-    Parameters:
-        resources (Dict[str, Number]):
-            A dictionary mapping each resource name (string) to its available capacity (number).
-            Example: {'cpu': 10, 'mem': 32}
+non-numeric values
 
-            Valid values:
-            - Keys must be strings (resource names)
-            - Values must be numbers (int or float) and should be >= 0
+invalid request structure properly"
+--------------------------------------------------
+--------------------------------------------------
+Prompt 3: "provide 6 acceptance criteria  given when then, to cover cases"
+LLM Response 2: "Nice, this function is perfect for **Given–When–Then** style acceptance criteria. Here are **6 solid acceptance criteria** that cover the important cases (normal + edge cases + errors):
 
-        requests (List[Dict[str, Number]]):
-            A list of request dictionaries. Each request maps resource names (strings)
-            to the amount required (number).
-            Example: [{'cpu': 2, 'mem': 4}, {'cpu': 3}]
+---
 
-            Valid values:
-            - Must be a list
-            - Each element must be a dictionary
-            - Dictionary keys must be strings
-            - Dictionary values must be numbers (int or float) and should be >= 0
-            - Resource names in requests must exist in the resources dictionary
+### ✅ 1. Feasible allocation (happy path)
 
-    Returns:
-        bool:
-            True if the total requested amount for every resource does not exceed
-            the available capacity; False otherwise.
+**Given** resource capacities `{cpu: 10, ram: 32}`
+**And** requests `[{cpu: 4, ram: 8}, {cpu: 6, ram: 16}]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `True`
 
-    Raises:
-        ValueError:
-            If any request in the list is not a dictionary.
-    """
+---
 
-⚠️ Also: your docstring must be before your code, not after return True.
+### ❌ 2. Total request exceeds capacity
 
-So structure should be:
+**Given** resource capacities `{cpu: 8, ram: 16}`
+**And** requests `[{cpu: 4, ram: 8}, {cpu: 6, ram: 10}]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `False`
 
-def is_allocation_feasible(...):
-    """DOCSTRING HERE"""
-    code...
+---
 
-If you want, I can rewrite your entire function cleanly (code + docstring) in one correct version — just say “rewrite it cleanly”.
+### ❌ 3. Request contains unknown resource
+
+**Given** resource capacities `{cpu: 10}`
+**And** requests `[{cpu: 4}, {gpu: 2}]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `False`
+
+---
+
+### ❌ 4. Request contains negative amount
+
+**Given** resource capacities `{cpu: 10}`
+**And** requests `[{cpu: -3}]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `False`
+
+---
+
+### ❌ 5. Resource capacity is invalid (negative)
+
+**Given** resource capacities `{cpu: -5}`
+**And** requests `[{cpu: 2}]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `False`
+
+---
+
+### ❌ 6. Request is not a dictionary
+
+**Given** resource capacities `{cpu: 10}`
+**And** requests `[["cpu", 3]]`
+**When** `is_allocation_feasible` is called
+**Then** the function returns `False`
+
+---
+
+If you want, I can turn these directly into:
+✅ pytest test cases
+✅ Gherkin (`.feature`) format
+✅ a test table
+✅ or match them exactly to your lab spec wording
+
+Just say which format you need 😄
+"
+----------------------------------------------------------------------------------------------------
+Prompt 4: "give constraints 6 and asumptions to problem"
+LLM Response 2: "Got it — you want **problem constraints** and **assumptions** (not tests). Here are **6 constraints** and **6 assumptions** for the *resource allocation feasibility* problem.
+
+---
+
+## ✅ Constraints (rules the solution must enforce)
+
+1. **Resource capacities must be non-negative numbers**
+   Each resource in `resources` must have a capacity ≥ 0 and be numeric (int or float).
+
+2. **Request amounts must be non-negative numbers**
+   Each requested amount must be ≥ 0 and be numeric.
+
+3. **All requested resources must exist in the resource pool**
+   A request cannot ask for a resource that is not defined in `resources`.
+
+4. **Total requested amount for each resource must not exceed its capacity**
+   For every resource `r`:
+   `sum(requests[i][r]) ≤ resources[r]`
+
+5. **Each request must be represented as a dictionary**
+   Every element in `requests` must map resource names to amounts.
+
+6. **The allocation decision is all-or-nothing**
+   Either all requests are feasible together or the allocation is rejected (no partial allocation).
+
+---
+
+## 📌 Assumptions (things we assume about the problem environment)
+
+1. **Resources are independent of each other**
+   CPU, RAM, disk, etc. do not affect each other’s capacity.
+
+2. **Requests are additive**
+   Resource usage is cumulative across all requests.
+
+3. **No prioritization or ordering of requests**
+   All requests are treated equally; order does not matter.
+
+4. **No preemption or sharing logic**
+   A resource unit cannot be partially reclaimed or dynamically adjusted once counted.
+
+5. **No time dimension is considered**
+   Requests are assumed to occur simultaneously (no scheduling over time).
+
+6. **Units of measurement are consistent**
+   All values for a given resource use the same unit (e.g., GB of RAM, number of CPUs).
+
+---
+
+If you want, I can rewrite these in:
+✅ more formal academic wording
+✅ simpler student-friendly wording
+✅ align them to IEEE-style requirement language
+✅ or match them to your lab handout format
+
+Just say which style you want.
+"
